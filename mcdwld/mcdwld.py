@@ -29,24 +29,29 @@ def download_versions(versions: dict, directory: str):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    for version in versions:
-        # Get informations
-        version_manifest_response = requests.request(
-            method='GET',
-            url=version['url']
-        )
-        version_manifest_json = version_manifest_response.json()
-        server_file_sha1 = version_manifest_json['downloads']['server']['sha1']
-        server_file_url = version_manifest_json['downloads']['server']['url']
-        local_filename = os.path.join(
-            directory,
-            'server-' + version['id'] + '.jar',
-        )
-        download_file(
-            server_file_sha1,
-            server_file_url,
-            local_filename,
-        )
+    infos_file = os.path.join(directory, 'servers-infos.txt')
+
+    with open(infos_file, 'w+') as infos:
+        for version in versions:
+            # Get informations
+            version_manifest_response = requests.request(
+                method='GET',
+                url=version['url']
+            )
+            version_manifest_json = version_manifest_response.json()
+            server_file_sha1 = version_manifest_json['downloads']['server']['sha1']
+            server_file_url = version_manifest_json['downloads']['server']['url']
+            local_filename = os.path.join(
+                directory,
+                'server-' + version['id'] + '.jar',
+            )
+            download_file(
+                server_file_sha1,
+                server_file_url,
+                local_filename,
+            )
+
+            infos.write('%s %s\n' % (version['id'], local_filename))
 
 
 def download_file(sha1: str, url: str, filepath: str):
