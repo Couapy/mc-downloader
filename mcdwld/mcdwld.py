@@ -14,14 +14,19 @@ class IntegrityCheckError(Exception):
     pass
 
 
-def get_versions(manifest_url: str):
+def get_versions(manifest_url: str, types=['snapshot', 'release', 'old_beta', 'old_alpha']):
     """Get manifest of mojang."""
     response = requests.request(
         method='GET',
         url=manifest_url,
     )
     response_json = response.json()
-    return response_json['versions']
+
+    versions = []
+    for version in response_json['versions']:
+        if version['type'] in types:
+            versions.append(version)
+    return versions
 
 
 def download_versions(versions: dict, directory: str):
