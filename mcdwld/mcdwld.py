@@ -44,8 +44,12 @@ def download_versions(versions: dict, directory: str):
                 url=version['url']
             )
             version_manifest_json = version_manifest_response.json()
-            server_file_sha1 = version_manifest_json['downloads']['server']['sha1']
-            server_file_url = version_manifest_json['downloads']['server']['url']
+            try:
+                server_file_sha1 = version_manifest_json['downloads']['server']['sha1']
+                server_file_url = version_manifest_json['downloads']['server']['url']
+            except KeyError:
+                logging.warning('Skip %s (%s) downloading, there isn\'t server file' % (version['id'], version['type']))
+                continue
             local_filename = os.path.join(
                 directory,
                 'server-' + version['id'] + '.jar',
