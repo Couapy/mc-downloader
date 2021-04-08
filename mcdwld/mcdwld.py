@@ -8,9 +8,11 @@ import requests
 
 
 MOJANG_MANIFEST_URL = 'https://launchermeta.mojang.com/mc/game/version_manifest.json'
+DOWNLOADS_VERSIONS_FILENAME = 'servers-infos.txt'
 
 
 class IntegrityCheckError(Exception):
+    """Throwed if the file signature doesn't match with signature expected."""
     pass
 
 
@@ -29,12 +31,12 @@ def get_versions(manifest_url: str, types=['snapshot', 'release', 'old_beta', 'o
     return versions
 
 
-def download_versions(versions: dict, directory: str):
+def download_versions(versions: dict, directory: str, info_filename=DOWNLOADS_VERSIONS_FILENAME):
     """Download specific versions, and verify their integrity."""
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    infos_file = os.path.join(directory, 'servers-infos.txt')
+    infos_file = os.path.join(directory, info_filename)
 
     with open(infos_file, 'w+') as infos:
         for version in versions:
@@ -91,8 +93,35 @@ def download_file(sha1: str, url: str, filepath: str):
 
 
 def check_integrity(filepath: str, sha1: str):
+    """Check file integrity."""
     hash_sha1 = hashlib.sha1()
     with open(filepath, 'rb') as file:
         for chunk in iter(lambda: file.read(8192), b''):
             hash_sha1.update(chunk)
     return hash_sha1.hexdigest() == sha1
+
+
+def get_server_file(directory: str, version: str, info_filename=DOWNLOADS_VERSIONS_FILENAME):
+    """Give the file path of a server."""
+    file_info = os.path.join(directory, info_filename)
+    if os.path.exists(file_info):
+        with open(file_info, 'r') as file:
+            content = file.readlines()
+            for line in content:
+                server_version, server_filepath = line.split(' ')
+                if version == server_version:
+                    return server_filepath
+    return None
+
+
+def get_local_versions(directory: str, info_filename=DOWNLOADS_VERSIONS_FILENAME):
+    """Give the local server versions."""
+    file_info = os.path.join(directory, info_filename)
+    versions = []
+    if os.path.exists(file_info):
+        with open(file_info, 'r') as file:
+            content = file.readlines()
+            for line in content:
+                server_version, server_filepath = line.split(' ')
+                versions.append(server_version)
+    return versions
