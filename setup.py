@@ -8,7 +8,7 @@ with open("requirements.txt") as fr:
 
 setuptools.setup(
     name="mc-downloader",
-    version="0.0.4",
+    version="0.0.5",
     license="MIT",
 
     author="Couapy",

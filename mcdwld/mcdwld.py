@@ -106,7 +106,7 @@ def get_server_file(directory: str, version: str, info_filename=DOWNLOADS_VERSIO
     file_info = os.path.join(directory, info_filename)
     if os.path.exists(file_info):
         with open(file_info, 'r') as file:
-            content = file.readlines()
+            content = file.read().split('\n')
             for line in content:
                 server_version, server_filepath = line.split(' ')
                 if version == server_version:
