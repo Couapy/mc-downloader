@@ -24,9 +24,14 @@ setuptools.setup(
     install_requires=requirements,
 
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Topic :: Games/Entertainment"
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 )
